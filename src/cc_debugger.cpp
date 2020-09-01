@@ -2,7 +2,7 @@
 
 #include <Arduino.h>
 
-#define CC_CLOCK_DELAY 1
+#define CC_CLOCK_DELAY 2
 
 cc_debugger::cc_debugger(int pin_rst, int pin_dc, int pin_dd, int pin_led)
     : direction(-1)
@@ -25,7 +25,7 @@ cc_debugger::cc_debugger(int pin_rst, int pin_dc, int pin_dd, int pin_led)
 
 inline void clock_delay(uint32_t count) {
   while (count--)
-    ;
+    __NOP();
 }
 
 void cc_debugger::set_direction(int dir) {
@@ -210,4 +210,14 @@ uint8_t cc_debugger::exec(uint8_t *istr, uint8_t count) {
 uint8_t cc_debugger::chip_erase() {
   send_cmd(CC_CMD_CHIP_ERASE);
   return read();
+}
+
+uint8_t cc_debugger::set_breakpoint(uint8_t cfg, uint8_t addr_hi, uint8_t addr_lo) {
+  switch_to_write();
+  write(CC_CMD_SET_HW_BRKPNT);
+  write(cfg);
+  write(addr_hi);
+  write(addr_lo);
+
+  return cfg;
 }

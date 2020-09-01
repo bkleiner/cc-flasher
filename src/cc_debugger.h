@@ -3,7 +3,8 @@
 #include <stdint.h>
 
 enum cc_debugger_error {
-  CC_OK
+  CC_OK,
+  CC_WRONG_DIRECTION
 };
 
 enum cc_debugger_cmd {
@@ -12,7 +13,7 @@ enum cc_debugger_cmd {
   CC_CMD_RD_CONFIG = 0x24,
   CC_CMD_GET_PC = 0x28,
   CC_CMD_READ_STATUS = 0x34,
-  // SET_HW_BRKPNT
+  CC_CMD_SET_HW_BRKPNT = 0x3b,
   CC_CMD_HALT = 0x44,
   CC_CMD_RESUME = 0x4C,
   CC_CMD_DEBUG_INSTR = 0x54,
@@ -45,6 +46,8 @@ public:
 
   uint8_t get_config();
   uint8_t set_config(uint8_t cfg);
+
+  uint8_t set_breakpoint(uint8_t cfg, uint8_t addr_hi, uint8_t addr_lo);
 
   void switch_to_read();
   void switch_to_write();

@@ -18,6 +18,7 @@ enum serial_cmd {
   CMD_CHPERASE = 0x0D,
   CMD_RESUME = 0x0E,
   CMD_HALT = 0x0F,
+  CMD_SET_BREAKPOINT = 0x10,
   CMD_PING = 0xF0,
 };
 
@@ -155,6 +156,11 @@ void loop() {
   }
   case CMD_HALT: {
     const uint8_t res = dbg->halt();
+    send_frame(ANS_OK, res);
+    break;
+  }
+  case CMD_SET_BREAKPOINT: {
+    const uint8_t res = dbg->set_breakpoint(data[0], data[1], data[2]);
     send_frame(ANS_OK, res);
     break;
   }
