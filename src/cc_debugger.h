@@ -2,9 +2,11 @@
 
 #include <stdint.h>
 
+#include "serial.h"
+
 enum cc_debugger_error {
   CC_OK,
-  CC_WRONG_DIRECTION
+  CC_TIMEOUT,
 };
 
 enum cc_debugger_cmd {
@@ -26,31 +28,17 @@ class cc_debugger {
 public:
   cc_debugger(int pin_rst, int pin_dc, int pin_dd, int pin_led);
 
-  cc_debugger_error enter();
-  cc_debugger_error exit();
+  void enter();
 
-  cc_debugger_error write(uint8_t data);
+  void write(uint8_t data);
   uint8_t read();
 
-  uint16_t get_chip_id();
-  uint16_t get_pc();
-  uint8_t get_status();
+  serial_response exec(uint8_t *istr, uint8_t count);
 
-  uint8_t exec(uint8_t *istr, uint8_t count);
-
-  uint8_t step();
-  uint8_t resume();
-  uint8_t halt();
-
-  uint8_t chip_erase();
-
-  uint8_t get_config();
-  uint8_t set_config(uint8_t cfg);
-
-  uint8_t set_breakpoint(uint8_t cfg, uint8_t addr_hi, uint8_t addr_lo);
-
-  void switch_to_read();
+  cc_debugger_error switch_to_read();
   void switch_to_write();
+
+  serial_response handle(serial_request &req);
 
 private:
   int direction;
